@@ -7,88 +7,12 @@ var snakeCtrlls = {
   moveDir: "w",
 };
 
-var nInterval,
-  intervalMs = 120;
+var nInterval, intervalMs = 120;
 
 /* The fkin problem */
-var moveX = 0,
-  moveY = -50;
+var moveX = 0, moveY = -50;
 
 nInterval = setInterval(moveSnake, intervalMs);
-
-document.getElementById("LeftCtrll").addEventListener("click", () => {
-  if (snakeCtrlls.moveDir == "a") {
-    snakeCtrlls.moveDir = "s";
-    changeDirection();
-    return;
-  }
-  if (snakeCtrlls.moveDir == "s") {
-    snakeCtrlls.moveDir = "d";
-    changeDirection();
-    return;
-  }
-  if (snakeCtrlls.moveDir == "d") {
-    snakeCtrlls.moveDir = "w";
-    changeDirection();
-    return;
-  }
-  if (snakeCtrlls.moveDir == "w") {
-    snakeCtrlls.moveDir = "a";
-    changeDirection();
-    return;
-  }
-});
-document.getElementById("RightCtrll").addEventListener("click", () => {
-  if (snakeCtrlls.moveDir == "a") {
-    snakeCtrlls.moveDir = "w";
-    changeDirection();
-    return;
-  }
-  if (snakeCtrlls.moveDir == "s") {
-    snakeCtrlls.moveDir = "a";
-    changeDirection();
-    return;
-  }
-  if (snakeCtrlls.moveDir == "d") {
-    snakeCtrlls.moveDir = "s";
-    changeDirection();
-    return;
-  }
-  if (snakeCtrlls.moveDir == "w") {
-    snakeCtrlls.moveDir = "d";
-    changeDirection();
-    return;
-  }
-});
-
-function changeDirection() {
-  switch (snakeCtrlls.moveDir) {
-    case "a":
-      moveX = -50;
-      moveY = 0;
-      break;
-
-    case "d":
-      moveX = 50;
-      moveY = 0;
-      break;
-
-    case "w":
-      moveX = 0;
-      moveY = -50;
-      break;
-
-    case "s":
-      moveX = 0;
-      moveY = 50;
-      break;
-  }
-
-  /* pls don't broke yourself */
-  snakeCtrlls.moveDir = value;
-  clearInterval(nInterval);
-  nInterval = setInterval(moveSnake, intervalMs);
-}
 
 /* initial snake */
 for (let i = 0; i < 2; i++) {
@@ -117,34 +41,77 @@ document.addEventListener("keypress", (e) => {
   switch (e.key) {
     case "a":
       if (snakeCtrlls.moveDir == "a" || snakeCtrlls.moveDir == "d") return;
+      snakeCtrlls.moveDir = e.key;
+      break;
+
+    case "d":
+      if (snakeCtrlls.moveDir == "a" || snakeCtrlls.moveDir == "d") return;
+      snakeCtrlls.moveDir = e.key;
+      break;
+
+    case "w":
+      if (snakeCtrlls.moveDir == "w" || snakeCtrlls.moveDir == "s") return;
+      snakeCtrlls.moveDir = e.key;
+      break;
+
+    case "s":
+      if (snakeCtrlls.moveDir == "w" || snakeCtrlls.moveDir == "s") return;
+      snakeCtrlls.moveDir = e.key;
+      break;
+  }
+
+  changeDirection();
+});
+document.getElementById("LeftCtrll").addEventListener("click", () => {
+  if (gameOver) return;
+
+  switch (snakeCtrlls.moveDir) {
+    case "a": snakeCtrlls.moveDir = "s"; break;
+    case "s": snakeCtrlls.moveDir = "d"; break;
+    case "d": snakeCtrlls.moveDir = "w"; break;
+    case "w": snakeCtrlls.moveDir = "a"; break;
+  }
+  changeDirection();
+});
+document.getElementById("RightCtrll").addEventListener("click", () => {
+  if (gameOver) return;
+
+  switch (snakeCtrlls.moveDir) {
+    case "a": snakeCtrlls.moveDir = "w"; break;
+    case "s": snakeCtrlls.moveDir = "a"; break;
+    case "d": snakeCtrlls.moveDir = "s"; break;
+    case "w": snakeCtrlls.moveDir = "d"; break;
+  }
+  changeDirection();
+});
+
+function changeDirection() {
+  switch (snakeCtrlls.moveDir) {
+    case "a":
       moveX = -50;
       moveY = 0;
       break;
 
     case "d":
-      if (snakeCtrlls.moveDir == "a" || snakeCtrlls.moveDir == "d") return;
       moveX = 50;
       moveY = 0;
       break;
 
     case "w":
-      if (snakeCtrlls.moveDir == "w" || snakeCtrlls.moveDir == "s") return;
       moveX = 0;
       moveY = -50;
       break;
 
     case "s":
-      if (snakeCtrlls.moveDir == "w" || snakeCtrlls.moveDir == "s") return;
       moveX = 0;
       moveY = 50;
       break;
   }
 
   /* pls don't broke yourself */
-  snakeCtrlls.moveDir = e.key;
   clearInterval(nInterval);
   nInterval = setInterval(moveSnake, intervalMs);
-});
+}
 
 /* All the move of the snake */
 function moveSnake() {
@@ -205,7 +172,7 @@ function SpawnFood() {
   Food.posY = Math.floor(Math.random() * spawnCellY) * 50;
 
   if (Math.floor(Math.random() * 2) > 0) {
-    Food.posX *= -1;
+    Food.posX *= -1; 
     Food.posY *= -1;
   }
 
@@ -223,49 +190,32 @@ function Eating() {
     snakeCtrlls.snakeLeght[0].y == Food.posY
   ) {
     Growing(snakeCtrlls.moveDir);
-    const food = document.getElementById("Food");
-    document.getElementById("Table").removeChild(food);
+    document.getElementById("Table").removeChild(document.getElementById("Food"));
     SpawnFood();
     score++;
     document.getElementById("scoreCount").innerHTML = `Score: ${score}`;
 
-    if (score > 10) {
-      intervalMs = 60;
-    }
-
-    if (score > 25) {
-      intervalMs = 30;
-    }
+    if (score > 10) { intervalMs = 60; }
+    if (score > 25) { intervalMs = 30; }
   }
 }
 
 function Growing(direction) {
   var x, y;
   switch (direction) {
-    case "w":
-      x = 0;
-      y = 50;
-      break;
-    case "a":
-      x = 50;
-      y = 0;
-      break;
-    case "s":
-      x = 0;
-      y = -50;
-      break;
-    case "d":
-      x = -50;
-      y = 0;
-      break;
+    case "w": x =   0; y =  50; break;
+    case "a": x =  50; y =   0; break;
+    case "s": x =   0; y = -50; break;
+    case "d": x = -50; y =   0; break;
   }
   /* Fuck */
   var bodyPos = {
     x: snakeCtrlls.snakeLeght[snakeCtrlls.snakeLeght.length - 1].x + x,
     y: snakeCtrlls.snakeLeght[snakeCtrlls.snakeLeght.length - 1].y + y,
   };
-  createBody(bodyPos.x, bodyPos.y);
 
+  /* One more size for snake */
+  createBody(bodyPos.x, bodyPos.y);
   snakeCtrlls.snakeLeght.push(bodyPos);
 }
 
@@ -275,6 +225,7 @@ function checkCollision() {
       snakeCtrlls.snakeLeght[0].x == snakeCtrlls.snakeLeght[i].x &&
       snakeCtrlls.snakeLeght[0].y == snakeCtrlls.snakeLeght[i].y
     ) {
+
       clearInterval(nInterval);
       alert("You lose, fool");
       gameOver = true;
