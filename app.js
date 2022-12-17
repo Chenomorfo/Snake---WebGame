@@ -7,13 +7,88 @@ var snakeCtrlls = {
   moveDir: "w",
 };
 
-var nInterval, intervalMs = 120;
+var nInterval,
+  intervalMs = 120;
 
 /* The fkin problem */
 var moveX = 0,
   moveY = -50;
 
 nInterval = setInterval(moveSnake, intervalMs);
+
+document.getElementById("LeftCtrll").addEventListener("click", () => {
+  if (snakeCtrlls.moveDir == "a") {
+    snakeCtrlls.moveDir = "s";
+    changeDirection();
+    return;
+  }
+  if (snakeCtrlls.moveDir == "s") {
+    snakeCtrlls.moveDir = "d";
+    changeDirection();
+    return;
+  }
+  if (snakeCtrlls.moveDir == "d") {
+    snakeCtrlls.moveDir = "w";
+    changeDirection();
+    return;
+  }
+  if (snakeCtrlls.moveDir == "w") {
+    snakeCtrlls.moveDir = "a";
+    changeDirection();
+    return;
+  }
+});
+document.getElementById("RightCtrll").addEventListener("click", () => {
+  if (snakeCtrlls.moveDir == "a") {
+    snakeCtrlls.moveDir = "w";
+    changeDirection();
+    return;
+  }
+  if (snakeCtrlls.moveDir == "s") {
+    snakeCtrlls.moveDir = "a";
+    changeDirection();
+    return;
+  }
+  if (snakeCtrlls.moveDir == "d") {
+    snakeCtrlls.moveDir = "s";
+    changeDirection();
+    return;
+  }
+  if (snakeCtrlls.moveDir == "w") {
+    snakeCtrlls.moveDir = "d";
+    changeDirection();
+    return;
+  }
+});
+
+function changeDirection() {
+  switch (snakeCtrlls.moveDir) {
+    case "a":
+      moveX = -50;
+      moveY = 0;
+      break;
+
+    case "d":
+      moveX = 50;
+      moveY = 0;
+      break;
+
+    case "w":
+      moveX = 0;
+      moveY = -50;
+      break;
+
+    case "s":
+      moveX = 0;
+      moveY = 50;
+      break;
+  }
+
+  /* pls don't broke yourself */
+  snakeCtrlls.moveDir = value;
+  clearInterval(nInterval);
+  nInterval = setInterval(moveSnake, intervalMs);
+}
 
 /* initial snake */
 for (let i = 0; i < 2; i++) {
@@ -37,7 +112,6 @@ function createBody(X, Y) {
 
 /* WASD config */
 document.addEventListener("keypress", (e) => {
-
   if (gameOver) return;
 
   switch (e.key) {
@@ -81,24 +155,24 @@ function moveSnake() {
     snakeCtrlls.snakeLeght[i].y = snakeCtrlls.snakeLeght[i - 1].y;
   }
 
-const Table = document.getElementById('Table')
+  const Table = document.getElementById("Table");
 
   snakeCtrlls.snakeLeght[0].x += moveX;
   snakeCtrlls.snakeLeght[0].y += moveY;
 
   /* If get out of square */
-  if (snakeCtrlls.snakeLeght[0].x > Table.offsetWidth-25) {
-    snakeCtrlls.snakeLeght[0].x = -Table.offsetWidth+25;
+  if (snakeCtrlls.snakeLeght[0].x > Table.offsetWidth - 25) {
+    snakeCtrlls.snakeLeght[0].x = -Table.offsetWidth + 25;
   }
-  if (snakeCtrlls.snakeLeght[0].x < -Table.offsetWidth+25) {
-    snakeCtrlls.snakeLeght[0].x = Table.offsetWidth-25;
+  if (snakeCtrlls.snakeLeght[0].x < -Table.offsetWidth + 25) {
+    snakeCtrlls.snakeLeght[0].x = Table.offsetWidth - 25;
   }
 
-  if (snakeCtrlls.snakeLeght[0].y > Table.offsetHeight-25) {
-    snakeCtrlls.snakeLeght[0].y = -Table.offsetHeight+25;
+  if (snakeCtrlls.snakeLeght[0].y > Table.offsetHeight - 25) {
+    snakeCtrlls.snakeLeght[0].y = -Table.offsetHeight + 25;
   }
-  if (snakeCtrlls.snakeLeght[0].y < -Table.offsetHeight+25) {
-    snakeCtrlls.snakeLeght[0].y = Table.offsetHeight-25;
+  if (snakeCtrlls.snakeLeght[0].y < -Table.offsetHeight + 25) {
+    snakeCtrlls.snakeLeght[0].y = Table.offsetHeight - 25;
   }
 
   /* Follow the leader */
@@ -108,7 +182,7 @@ const Table = document.getElementById('Table')
   }
 
   Eating();
-  checkCollision()
+  checkCollision();
 }
 
 /* The food */
@@ -122,10 +196,10 @@ function SpawnFood() {
   food.setAttribute("id", "Food");
   food.classList.add("Food");
 
-const Table = document.getElementById('Table')
+  const Table = document.getElementById("Table");
 
-const spawnCellX = (Table.offsetWidth-25)/50
-const spawnCellY = (Table.offsetHeight-25)/50
+  const spawnCellX = (Table.offsetWidth - 25) / 50;
+  const spawnCellY = (Table.offsetHeight - 25) / 50;
 
   Food.posX = Math.floor(Math.random() * spawnCellX) * 50;
   Food.posY = Math.floor(Math.random() * spawnCellY) * 50;
@@ -152,17 +226,16 @@ function Eating() {
     const food = document.getElementById("Food");
     document.getElementById("Table").removeChild(food);
     SpawnFood();
-    score++
-    document.getElementById('scoreCount').innerHTML = `Score: ${score}`
+    score++;
+    document.getElementById("scoreCount").innerHTML = `Score: ${score}`;
 
     if (score > 10) {
-      intervalMs = 60
+      intervalMs = 60;
     }
 
     if (score > 25) {
-      intervalMs = 30
+      intervalMs = 30;
     }
-
   }
 }
 
@@ -170,16 +243,23 @@ function Growing(direction) {
   var x, y;
   switch (direction) {
     case "w":
-      x = 0;  y = 50; break;
+      x = 0;
+      y = 50;
+      break;
     case "a":
-      x = 50;  y = 0; break;
+      x = 50;
+      y = 0;
+      break;
     case "s":
-      x = 0;  y = -50;  break;
+      x = 0;
+      y = -50;
+      break;
     case "d":
-      x = -50;  y = 0;  break;
-
+      x = -50;
+      y = 0;
+      break;
   }
-/* Fuck */
+  /* Fuck */
   var bodyPos = {
     x: snakeCtrlls.snakeLeght[snakeCtrlls.snakeLeght.length - 1].x + x,
     y: snakeCtrlls.snakeLeght[snakeCtrlls.snakeLeght.length - 1].y + y,
@@ -190,23 +270,20 @@ function Growing(direction) {
 }
 
 function checkCollision() {
-  
   for (let i = 1; i < snakeCtrlls.snakeLeght.length; i++) {
+    if (
+      snakeCtrlls.snakeLeght[0].x == snakeCtrlls.snakeLeght[i].x &&
+      snakeCtrlls.snakeLeght[0].y == snakeCtrlls.snakeLeght[i].y
+    ) {
+      clearInterval(nInterval);
+      alert("You lose, fool");
+      gameOver = true;
 
-    if (snakeCtrlls.snakeLeght[0].x == snakeCtrlls.snakeLeght[i].x &&
-      snakeCtrlls.snakeLeght[0].y == snakeCtrlls.snakeLeght[i].y) {
-      
-        clearInterval(nInterval);
-        alert('You lose, fool')
-        gameOver = true;
-
-        let Reset = document.createElement('button');
-        Reset.classList.add('ResetButton')
-        Reset.innerHTML = 'Reset The Game'
-        Reset.addEventListener('click',()=>window.location.reload())
-        document.body.appendChild(Reset)
+      let Reset = document.createElement("button");
+      Reset.classList.add("ResetButton");
+      Reset.innerHTML = "Reset The Game";
+      Reset.addEventListener("click", () => window.location.reload());
+      document.body.appendChild(Reset);
     }
-    
   }
-
 }
